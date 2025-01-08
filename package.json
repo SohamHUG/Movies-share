@@ -1,0 +1,15 @@
+{
+  "name": "movies-share",
+  "version": "1.0.0",
+  "scripts": {
+    "dev:client": "pnpm --filter movies-share-client dev",
+    "dev:server": "pnpm --filter movies-share-server dev",
+    "dev": "concurrently \"pnpm dev:client\" \"pnpm dev:server\""
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
