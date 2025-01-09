@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { APIResponse, logger } from "../utils";
-import { findAllMovies, pushMovie } from "../models/movie.model";
+import { deleteMovie, findAllMovies, findMovieById, pushMovie, updateMovie } from "../models/movie.model";
+import { request } from "http";
 
 export const createMovie = async (request: Request, response: Response) => {
 
@@ -14,12 +15,39 @@ export const createMovie = async (request: Request, response: Response) => {
 }
 
 export const getMovies = async (request: Request, response: Response) => {
-    try {
-        const movies = await findAllMovies();
+    const movies = await findAllMovies();
 
-        APIResponse(response, movies, "Tous les films", 200);
-    } catch (err: any) {
-        logger.error(`Erreur lors de la récupération des utilisateurs: ${err.message}`);
-        APIResponse(response, null, err.message, 500);
+    APIResponse(response, movies, "Tous les films", 200);
+}
+
+export const getMovieById = async (request: Request, response: Response) => {
+    const { id } = request.params;
+
+    const movie = await findMovieById(id);
+
+    if (movie.length > 0) {
+        APIResponse(response, movie, "Movie found", 200);
+    } else {
+        APIResponse(response, null, "Movie not found", 404);
     }
+}
+
+export const deleteMovieById = async (request: Request, response: Response) => {
+    const { id } = request.params;
+    const { userId } = response.locals.user;
+
+    await deleteMovie(id, userId);
+    APIResponse(response, null, "Movie deleted", 204);
+}
+
+export const updateMovieById = async (request: Request, response: Response) => {
+    
+    const { id } = request.params;
+    const { title, description, producer, releaseYear } = request.body
+    const publishedBy = response.locals.user.userId
+
+    const post = { title, description, producer, releaseYear, publishedBy };
+
+    await updateMovie(id, post);
+    APIResponse(response, post, "Post updated", 200);
 }
