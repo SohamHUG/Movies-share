@@ -1,4 +1,4 @@
-import { uuid, pgTable, timestamp, uuid as uuidType, pgEnum } from "drizzle-orm/pg-core";
+import { uuid, pgTable, timestamp, pgEnum } from "drizzle-orm/pg-core";
 import { movies } from "./movies";
 import { users } from "./users";
 

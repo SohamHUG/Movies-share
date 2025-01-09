@@ -108,7 +108,7 @@ export const updateMovieById = (id: string, movie: NewMovie) => {
             )
         ).execute();
     } catch (err: any) {
-        logger.error(`Erreur lors de la suppression du film: ${err.message}`);
-        throw new Error('Impossible de supprimer le film')
+        logger.error(`Erreur lors de la modification du film: ${err.message}`);
+        throw new Error('Impossible de modifier le film')
     }
 }

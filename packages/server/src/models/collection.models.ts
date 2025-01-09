@@ -34,7 +34,8 @@ export const pushCollection = (collection: NewCollection) => {
 export const findMyCollection = (userId: string) => {
     try {
         return db
-            .select({
+            .select(
+                {
                 id: collections.id,
                 movie: {
                     id: movies.id,
@@ -47,8 +48,67 @@ export const findMyCollection = (userId: string) => {
                 movies, eq(movies.id, collections.movieId)
             )
             .where(eq(collections.userId, userId))
+            .execute()
     } catch (err: any) {
         logger.error(`Erreur lors de la sélection des films: ${err.message}`);
         throw new Error('Impossible de récupérer les films')
+    }
+}
+
+export const findAllCollections = () => {
+    try {
+        return db
+            .select(
+                {
+                id: collections.id,
+                movie: {
+                    id: movies.id,
+                    title: movies.title,
+                },
+                user: {
+                    id: users.id,
+                    username: users.username
+                },
+                status: collections.status
+            })
+            .from(collections)
+            .leftJoin(
+                movies, eq(movies.id, collections.movieId)
+            )
+            .leftJoin(
+                users, eq(users.id, collections.userId)
+            )
+            .execute()
+    } catch (err: any) {
+        logger.error(`Erreur lors de la sélection des films: ${err.message}`);
+        throw new Error('Impossible de récupérer les films')
+    }
+}
+
+export const updateCollectionStatus = (collection: NewCollection) => {
+    try {
+        return db.update(collections).set(collection).where(
+            and(
+                eq(collections.userId, collection.userId),
+                eq(collections.movieId, collection.movieId)
+            )
+        ).execute();
+    } catch (err: any) {
+        logger.error(`Erreur lors de la modification de la collection: ${err.message}`);
+        throw new Error('Impossible de modifier la collection')
+    }
+}
+
+export const deleteFromCollection = (id: string, userId: string) => {
+    try {
+        return db.delete(collections).where(
+            and(
+                eq(collections.id, id),
+                eq(collections.userId, userId)
+            )
+        ).execute();
+    } catch (err: any) {
+        logger.error(`Erreur lors de la suppression du film de la collection: ${err.message}`);
+        throw new Error('Impossible de supprimer le film de la collection')
     }
 }
