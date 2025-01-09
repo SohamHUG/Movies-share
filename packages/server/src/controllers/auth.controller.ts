@@ -4,7 +4,7 @@ import { z } from "zod";
 import { env } from "../config/env";
 import { APIResponse, hashPassword, logger, verifyPassword } from "../utils";
 import { userValidation } from "../validation/users.validation"
-import { saveUser, findByCredentials } from "../models/user.model";
+import { findByCredentials, pushUser } from "../models/user.model";
 
 const { NODE_ENV, JWT_SECRET } = env;
 
@@ -19,7 +19,7 @@ export const register = async (request: Request, response: Response) => {
         if (!hash)
             throw new Error("Erreur lors du hashage du mot de passe");
 
-        const [ newUser ] = await saveUser({ username, email, password: hash });
+        const [ newUser ] = await pushUser({ username, email, password: hash });
         if (!newUser)
             return APIResponse(response, [], "Erreur lors de la création de l'utilisateur", 500); 
 
@@ -45,11 +45,8 @@ export const login = async (request: Request, response: Response) => {
             return APIResponse(response, [], "Email ou mot de passe invalide", 400);
         }
 
-        // email + mdp corrects
-        // Génération des tokens refresh/access (continuer à rester connecté après une longue periode d'activité)
         const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
 
-        // On ajoute les cookies: il faut bien que ces deux tokens servent à quelque chose: on aura 2 cookies, un de la valeur de l'accesstoken et un autre du refresh token
         response.cookie('accessToken', accessToken, {
             httpOnly: true, // true empêche l'accès au cookie en javascript: accessible uniquement via communication http
             sameSite: 'strict', // protége contre les attaques CSRF

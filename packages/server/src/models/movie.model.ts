@@ -1,6 +1,6 @@
 import { logger } from "../utils";
 import { movies, users, reviews } from "../schemas";
-import { and, eq } from "drizzle-orm";
+import { and, eq, like, or } from "drizzle-orm";
 import { db } from "../config/pool";
 import { NewMovie } from "../entities/Movies";
 
@@ -85,7 +85,7 @@ export const findMovieById = (id: string) => {
 }
 
 
-export const deleteMovie = (id: string, userId: string) => {
+export const deleteMovieById = (id: string, userId: string) => {
     try {
         return db.delete(movies).where(
             and(
@@ -99,7 +99,7 @@ export const deleteMovie = (id: string, userId: string) => {
     }
 }
 
-export const updateMovie = (id: string, movie: NewMovie) => {
+export const updateMovieById = (id: string, movie: NewMovie) => {
     try {
         return db.update(movies).set(movie).where(
             and(

@@ -10,7 +10,6 @@ export async function hashPassword(password: string): Promise<string | void> {
         return;
     }
 
-    // On va hash un mot de passe
     try {
         const hash = await argon2.hash(password, {
             type: argon2.argon2id, // utilisation de l'algo argon2id pour le hashage -> le + recommandé
@@ -22,7 +21,6 @@ export async function hashPassword(password: string): Promise<string | void> {
             salt: Buffer.from(SALT) // "clé" ou salt de hashage pour rendre le hashage unique
         })
 
-        // console.log('Mot de passe hashé: ', hash);
         return hash;
     } catch (err) {
         logger.error('Erreur de hashage: ', err);

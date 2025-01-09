@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { createMovie, deleteMovieById, getMovieById, getMovies, updateMovieById } from "../controllers/movie.controller";
+import { createMovie, deleteMovie, getMovieById, getMovies, updateMovie } from "../controllers/movie.controller";
 
 const router = Router();
 
 router.post('/', [authMiddleware], createMovie);
 
-router.delete('/:id', [authMiddleware], deleteMovieById)
+router.delete('/:id', [authMiddleware], deleteMovie)
 
-router.put('/:id', [authMiddleware], updateMovieById)
+router.put('/:id', [authMiddleware], updateMovie)
 
 router.get('/', getMovies);
 

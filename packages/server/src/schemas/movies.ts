@@ -7,7 +7,7 @@ export const movies = pgTable("movies", {
     title: varchar('title', { length: 255 }).notNull(),
     description: text('description').notNull(),
     producer: varchar('producer', {length: 255}).notNull(),
-    releaseYear: integer('release_year'),
+    releaseYear: integer('release_year').notNull(),
     publishedBy: uuid('published_by').references(() => users.id, { onDelete: "cascade" }).notNull(),
     publishedOn: timestamp('published_on').defaultNow() 
 });

@@ -14,6 +14,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
     try {
         const decoded = jwt.verify(accessToken, JWT_SECRET);
+
         res.locals.user = decoded;
         next();
     } catch (err) {

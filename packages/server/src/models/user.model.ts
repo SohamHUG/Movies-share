@@ -1,5 +1,5 @@
 import { db } from "../config/pool";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { users } from "../schemas";
 import { User, NewUser } from "../entities/User";
 import { logger } from "../utils";
@@ -22,7 +22,7 @@ export const findByCredentials = (email: string) => {
     }
 };
 
-export const saveUser = (user: NewUser) => {
+export const pushUser = (user: NewUser) => {
     try {
         return db.insert(users).values(user).returning({ id: users.id }).execute();
     } catch (err: any) {
@@ -31,7 +31,7 @@ export const saveUser = (user: NewUser) => {
     }
 };
 
-export const getAllUsers = () => {
+export const findAllUsers = () => {
     try {
         return db
             .select({
@@ -46,3 +46,36 @@ export const getAllUsers = () => {
         throw new Error('Impossible de récupérer les utilisateurs');
     }
 }
+
+export const findUserById = (id: string) => {
+    try {
+        return db
+            .select({
+                id: users.id,
+                username: users.username,
+                email: users.email
+            })
+            .from(users)
+            .where(
+                eq(users.id, id)
+            )
+            .execute()
+    } catch (err: any) {
+        logger.error(`Erreur lors de la récupération de l'utilisateur: ${err.message}`);
+        throw new Error("Impossible de récupérer l'utilisateur");
+    }
+}
+
+export const deleteUserById = (id: string, userId: string) => {
+    try {
+        return db.delete(users).where(
+            and(
+                eq(users.id, id),
+                eq(users.id, userId)
+            )
+        )
+    } catch (err: any) {
+        logger.error("Impossible de supprimer l'utilisateur " + err.message)
+        throw new Error("L'utilisateur ne peut pas être supprimé");
+    }
+};

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { APIResponse, logger } from "../utils";
-import { deleteMovie, findAllMovies, findMovieById, pushMovie, updateMovie } from "../models/movie.model";
+import { deleteMovieById, findAllMovies, findMovieById, pushMovie, updateMovieById } from "../models/movie.model";
 import { request } from "http";
 
 export const createMovie = async (request: Request, response: Response) => {
@@ -32,22 +32,22 @@ export const getMovieById = async (request: Request, response: Response) => {
     }
 }
 
-export const deleteMovieById = async (request: Request, response: Response) => {
+export const deleteMovie = async (request: Request, response: Response) => {
     const { id } = request.params;
     const { userId } = response.locals.user;
 
-    await deleteMovie(id, userId);
+    await deleteMovieById(id, userId);
     APIResponse(response, null, "Movie deleted", 204);
 }
 
-export const updateMovieById = async (request: Request, response: Response) => {
-    
+export const updateMovie = async (request: Request, response: Response) => {
+
     const { id } = request.params;
     const { title, description, producer, releaseYear } = request.body
     const publishedBy = response.locals.user.userId
 
     const post = { title, description, producer, releaseYear, publishedBy };
 
-    await updateMovie(id, post);
+    await updateMovieById(id, post);
     APIResponse(response, post, "Post updated", 200);
 }
