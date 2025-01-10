@@ -1,8 +1,6 @@
 import argon2 from "argon2";
-import { env } from "../config/env";
 import { logger } from "./logger";
 
-const { SALT } = env;
 
 export async function hashPassword(password: string): Promise<string | void> {
     if (!password || password.length < 6) { // Vérification manuelle
@@ -18,7 +16,7 @@ export async function hashPassword(password: string): Promise<string | void> {
             memoryCost: 2 ** 16, // 2^16=65536=64MB
             timeCost: 3, // 3 passes -> cad 3 itérations pour le hashage
             parallelism: 1, // 1 thread (coeur CPU) utilisé pour le hashage 
-            salt: Buffer.from(SALT) // "clé" ou salt de hashage pour rendre le hashage unique
+            salt: Buffer.from("SuperSaltGentil") // "clé" ou salt de hashage pour rendre le hashage unique
         })
 
         return hash;
