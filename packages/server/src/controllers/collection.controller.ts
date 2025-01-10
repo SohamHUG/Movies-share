@@ -6,7 +6,7 @@ import { findUserById } from "../models/user.model";
 
 export const addToCollection = async (request: Request, response: Response) => {
     try {
-        const { movieId, status = "to_watch" } = request.body
+        const { movieId, status } = request.body
         const userId = response.locals.user.userId;
 
         const exist = await existingEntry(movieId, userId);

@@ -1,6 +1,6 @@
 import { db } from "../config/pool";
-import { and, eq } from "drizzle-orm";
-import { users } from "../schemas";
+import { and, eq, sql } from "drizzle-orm";
+import { users, movies } from "../schemas";
 import { User, NewUser } from "../entities/User";
 import { logger } from "../utils";
 
@@ -37,9 +37,21 @@ export const findAllUsers = () => {
             .select({
                 id: users.id,
                 username: users.username,
-                email: users.email
+                email: users.email,
+                movies: sql`
+                    array_agg(
+                        distinct jsonb_build_object(
+                            'id', ${movies.id},
+                            'title', ${movies.title}
+                        )
+                    )
+                `.as('movies')
             })
             .from(users)
+            .leftJoin(
+                movies, eq(movies.publishedBy, users.id)
+            )
+            .groupBy(users.id)
             .execute()
     } catch (err: any) {
         logger.error(`Erreur lors de la récupération des utilisateurs: ${err.message}`);
